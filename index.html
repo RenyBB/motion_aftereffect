@@ -42,7 +42,7 @@
   // Preload stimuli
   const preload = {
           type: jsPsychPreload,
-      video: [stim_path + 'spiral_aftereffect_30s.mp4'],
+      video: [stim_path + 'spiral_aftereffect_30s_cropped.mp4'],
       images: [stim_path + 'stiral_aftereffect_test.png']
       };
   timeline.push(preload);
@@ -64,7 +64,7 @@
 
     const spiral_stim = {
         type: jsPsychVideoKeyboardResponse,
-        stimulus:[stim_path + 'spiral_aftereffect_30s.mp4'],
+        stimulus:[stim_path + 'spiral_aftereffect_30s_cropped.mp4'],
         choices: 'NO KEYS',
         prompt: 'Keep your gaze fixed in the centre of the spiral.',
         autoplay: true,
