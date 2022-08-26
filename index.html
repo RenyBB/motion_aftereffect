@@ -48,21 +48,6 @@
       images: [stim_path + 'stiral_aftereffect_test.png']
       };
   timeline.push(preload);
-
-    const task_instructions = {
-        type: jsPsychInstructions,
-        pages: [
-            `<p>You will watch an animation of a spiral for 30 seconds.<br>
-       Keep your gaze fixed in the centre of the spiral.<br><br>
-       After the video ends, you will see a grid of dots like the image below.<br><br></p>`+
-            `<img src=${stim_path + "stiral_aftereffect_test.png"} width="400" style="margin:auto;"></img>`+
-       `<p>The dots may appear to move and your task will be to press the spacebar when the dots stop moving.<br></p>`],
-        show_clickable_nav: true,
-        allow_backward: false,
-        post_trial_gap: 500,
-        button_label_next: 'Continue',
-    };
-   timeline.push(task_instructions);
     
      const task_instructions = {
         type: jsPsychInstructions,
