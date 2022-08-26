@@ -4,12 +4,14 @@
     <script src="https://unpkg.com/jspsych@7.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-preload"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-video-button-response@1.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-browser-check@1.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-video-keyboard-response@1.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-instructions@1.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.0.0"></script>
     <link rel="stylesheet" href="https://unpkg.com/jspsych@7.0.0/css/jspsych.css">
 </head>
 <body>
@@ -54,18 +56,40 @@
        Keep your gaze fixed in the centre of the spiral.<br><br>
        After the video ends, you will see a grid of dots like the image below.<br><br></p>`+
             `<img src=${stim_path + "stiral_aftereffect_test.png"} width="400" style="margin:auto;"></img>`+
-       `<p>The dots may appear to move and your task will be to press the spacebar when the dots stop moving.<br><br>Click on <b>Continue</b> to begin.<br></p>`],
+       `<p>The dots may appear to move and your task will be to press the spacebar when the dots stop moving.<br></p>`],
         show_clickable_nav: true,
         allow_backward: false,
         post_trial_gap: 500,
         button_label_next: 'Continue',
     };
    timeline.push(task_instructions);
+    
+     const task_instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            `<p>You will watch an animation of a spiral for 30 seconds.<br>
+       Keep your gaze fixed in the centre of the spiral.<br><br>
+       After the video ends, you will see a grid of dots like the image below.<br><br></p>`+
+            `<img src=${stim_path + "stiral_aftereffect_test.png"} width="400" style="margin:auto;"></img>`+
+       `<p>The dots may appear to move and your task will be to press the spacebar when the dots stop moving.<br></p>`],
+        show_clickable_nav: true,
+        allow_backward: false,
+        post_trial_gap: 500,
+        button_label_next: 'Continue',
+    };
+   timeline.push(task_instructions);
+    
+    const opt_out = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: ['If you experience motion sickness or motion sensitivity, the video may make you dizzy.<br>You can choose to exit the task or continue.<br>If you choose to continue, you can stop the animation at any time.'],
+    choices: ['Exit', 'Continue'],
+    post_trial_gap: post_prompt_iti
+};
+    timeline.push(opt_out);
 
     const spiral_stim = {
-        type: jsPsychVideoKeyboardResponse,
+        type: jsPsychVideoButtonResponse,
         stimulus:[stim_path + 'spiral_aftereffect_30s_cropped.mp4'],
-        choices: 'NO KEYS',
         prompt: 'Keep your gaze fixed in the centre of the spiral.',
         autoplay: true,
         controls: false,
@@ -73,10 +97,11 @@
         rate: 1,
         start: 0,
         //stop: 3,
+        choices: ['Stop video']
         trial_ends_after_video: true,
-        response_ends_trial: false,
+        response_ends_trial: true,
     };
-    timeline.push(spiral_stim);
+    //timeline.push(spiral_stim);
 
     const test_image = {
         type: jsPsychImageKeyboardResponse,
@@ -87,7 +112,7 @@
         response_end_trial: true,
         prompt: "<p>Look at the grid of dots. Press the spacebar when the dots stop moving.</p>",
     };
-    timeline.push(test_image);
+    //timeline.push(test_image);
 
 
 
@@ -100,9 +125,20 @@
                 options: ['The dots were moving towards the centre of the screen', 'The dots were moving towards the edges of the screen', 'The dots were moving but I could not sense a direction of movement', 'The dots were not moving at all']
             }]
     };
-    timeline.push(direction_of_motion);
+    //timeline.push(direction_of_motion);
 
-
+    var if_node_opt_out = {
+            timeline: [spiral_stim, test_image, direction_of_motion],
+            conditional_function: function () {
+                let opt_out_response = jsPsych.data.get().last(1).values()[0].response;
+                if (opt_out_response == 1) {  // task runs only if participants respond "continue" 
+                    return true;
+                } else {                        // task doesn't run if participants respond "exit"
+                    return false;
+                }
+            }
+        }
+        timeline.push(if_node_exit_task);
 
   // Run the experiment
   jsPsych.run(timeline);
